@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusSquare, BarChart, Wallet, Clock } from "lucide-react"; // ✅ Added Clock for "View Transactions"
+import { Home, PlusSquare, BarChart, Wallet, Banknote } from "lucide-react"; // ✅ Added Clock for "View Transactions"
 
 const navItems = [
   { name: "Home", href: "/", icon: Home },
   { name: "Add", href: "/add-transaction", icon: PlusSquare },
-  { name: "Transactions", href: "/transactions", icon: Clock }, // ✅ Added Transactions
-  { name: "Budget", href: "/budget", icon: BarChart },
+  { name: "Analytics", href: "/analytics", icon: BarChart },
+  { name: "Budget", href: "/budget", icon: Banknote },
   { name: "Accounts", href: "/accounts", icon: Wallet },
 ];
 

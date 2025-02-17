@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   PlusSquare,
-  Clock,
+  BarChart,
   Wallet,
   Tag,
   Home,
@@ -15,7 +15,7 @@ import {
 const menuItems = [
   { name: "Home", href: "/", icon: <Home className="w-6 h-6" /> },
   { name: "Add Transaction", href: "/add-transaction", icon: <PlusSquare className="w-6 h-6" /> },
-  { name: "View Transactions", href: "/transactions", icon: <Clock className="w-6 h-6" /> },
+  { name: "Analytics", href: "/analytics", icon: <BarChart className="w-6 h-6" /> },
   { name: "Budget", href: "/budget", icon: <Banknote className="w-6 h-6" /> },
   { name: "Accounts", href: "/accounts", icon: <Wallet className="w-6 h-6" /> },
   // ❌ Removed Categories
