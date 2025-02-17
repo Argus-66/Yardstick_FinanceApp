@@ -6,8 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   PlusSquare,
   BarChart,
-  Wallet,
-  Tag,
+  Activity,
   Home,
   Banknote,
 } from "lucide-react";
@@ -17,6 +16,8 @@ const menuItems = [
   { name: "Add Transaction", href: "/add-transaction", icon: <PlusSquare className="w-6 h-6" /> },
   { name: "Analytics", href: "/analytics", icon: <BarChart className="w-6 h-6" /> },
   { name: "Budget", href: "/budget", icon: <Banknote className="w-6 h-6" /> },
+  { name: "Insights", href: "/insights", icon: <Activity /> }, 
+
 ];
 
 export default function Sidebar() {
