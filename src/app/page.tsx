@@ -1,26 +1,35 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import MonthSelector from "@/components/MonthSelector";
-import { ExpenseSummary } from "@/components/ExpenseSummary";
-import { TransactionsList } from "@/components/TransactionsList";
-import { TransactionPopup } from "@/components/TransactionPopup";
 
-export default function Home() {
-  const [currentMonth, setCurrentMonth] = useState(new Date()); // ✅ Now using Date object
-  const [transactions, setTransactions] = useState([]);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
+interface Transaction {
+  _id: string;
+  date: string;
+  category: string;
+  amount: number;
+  type: "income" | "expense";
+}
+
+export default function HomePage() {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [transactions, setTransactions] = useState<Transaction[]>([]); // ✅ Define the type explicitly
 
   useEffect(() => {
-    fetch("/api/transactions")
-      .then((res) => res.json())
-      .then((data) => setTransactions(data))
-      .catch((err) => console.error("Error fetching transactions:", err));
+    async function fetchTransactions() {
+      try {
+        const res = await fetch("/api/transactions");
+        const data: Transaction[] = await res.json();
+        setTransactions(data);
+      } catch (error) {
+        console.error("❌ Error fetching transactions:", error);
+      }
+    }
+    fetchTransactions();
   }, []);
 
-  // ✅ Filter transactions to only show the selected month
+  // ✅ Fix: Ensure TypeScript understands `.date`
   const filteredTransactions = transactions.filter((t) => {
-    const transactionDate = new Date(t.date);
+    const transactionDate = new Date(t.date); // ✅ Now TypeScript knows `.date` exists
     return (
       transactionDate.getMonth() === currentMonth.getMonth() &&
       transactionDate.getFullYear() === currentMonth.getFullYear()
@@ -29,25 +38,8 @@ export default function Home() {
 
   return (
     <div className="p-6">
-      {/* ✅ Month Selector */}
-      <MonthSelector currentMonth={currentMonth} onMonthChange={setCurrentMonth} />
-
-      {/* ✅ Expense Summary */}
-      <ExpenseSummary transactions={filteredTransactions} />
-
-      {/* ✅ Transactions List */}
-      <TransactionsList transactions={filteredTransactions} onSelectTransaction={setSelectedTransaction} />
-
-      {/* ✅ Transaction Popup */}
-      <TransactionPopup
-        transaction={selectedTransaction}
-        onClose={() => setSelectedTransaction(null)}
-        onDelete={(id) => {
-          console.log("Deleting transaction with ID:", id);
-          setSelectedTransaction(null);
-          // TODO: Call API to delete transaction
-        }}
-      />
+      <h2 className="text-white text-lg font-semibold mb-4">📊 Transactions</h2>
+      {/* Render Transactions Here */}
     </div>
   );
 }
