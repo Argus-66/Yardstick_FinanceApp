@@ -2,15 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 
-// ✅ Define transaction type
 interface Transaction {
-  date: string;
-  category: string;
-  method: string;
   amount: number;
+  date: string;
+  type: "expense" | "income";
 }
 
-// ✅ Define props type
 interface ExpenseSummaryProps {
   currentMonth: string;
 }
@@ -34,31 +31,35 @@ export function ExpenseSummary({ currentMonth }: ExpenseSummaryProps) {
     fetchTransactions();
   }, []);
 
+  // ✅ Filter transactions for the selected month
   const filteredTransactions = transactions.filter((t) =>
     t.date.startsWith(currentMonth.split(",")[1].trim())
   );
 
+  // ✅ Calculate total expense & total income separately
   const totalExpense = filteredTransactions
-    .filter((t) => t.amount < 0)
-    .reduce((acc, t) => acc + t.amount, 0);
+    .filter((t) => t.type === "expense")
+    .reduce((acc, t) => acc + Math.abs(t.amount), 0);
 
   const totalIncome = filteredTransactions
-    .filter((t) => t.amount > 0)
-    .reduce((acc, t) => acc + t.amount, 0);
+    .filter((t) => t.type === "income")
+    .reduce((acc, t) => acc + Math.abs(t.amount), 0);
+
+  const total = totalIncome - totalExpense; // ✅ Correct calculation
 
   return (
     <div className="grid grid-cols-3 text-center text-sm">
       <div className="text-red-500">
         <div className="font-semibold">EXPENSE</div>
-        <div className="text-lg">₹{Math.abs(totalExpense).toFixed(2)}</div>
+        <div className="text-lg">₹{totalExpense.toFixed(2)}</div>
       </div>
       <div className="text-green-500">
         <div className="font-semibold">INCOME</div>
         <div className="text-lg">₹{totalIncome.toFixed(2)}</div>
       </div>
-      <div className={`${totalExpense + totalIncome < 0 ? "text-red-500" : "text-green-500"}`}>
+      <div className={`${total < 0 ? "text-red-500" : "text-green-500"}`}>
         <div className="font-semibold">TOTAL</div>
-        <div className="text-lg">₹{(totalExpense + totalIncome).toFixed(2)}</div>
+        <div className="text-lg">₹{total.toFixed(2)}</div>
       </div>
     </div>
   );
