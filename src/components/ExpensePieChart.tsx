@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Pie, PieChart, Tooltip, Cell, ResponsiveContainer, Legend, Label } from "recharts";
 
 interface Transaction {
   category: string;
   amount: number;
-  type: "income" | "expense";
+  type: "expense";
 }
 
 interface ExpensePieChartProps {
@@ -14,49 +14,62 @@ interface ExpensePieChartProps {
 }
 
 export default function ExpensePieChart({ transactions }: ExpensePieChartProps) {
-  // ✅ Filter only expenses
-  const expenseTransactions = transactions.filter((t) => t.type === "expense");
-
   // ✅ Group expenses by category
   const categoryTotals: { [key: string]: number } = {};
-  expenseTransactions.forEach((t) => {
-    categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Math.abs(t.amount);
+  let totalExpense = 0;
+
+  transactions.forEach((t) => {
+    if (t.type === "expense") {
+      categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Math.abs(t.amount);
+      totalExpense += Math.abs(t.amount);
+    }
   });
 
-  // ✅ Convert data for Pie Chart
+  // ✅ Format data for Pie Chart (Include Percentage)
   const data = Object.keys(categoryTotals).map((category) => ({
-    name: category,
+    category,
     value: categoryTotals[category],
+    percentage: ((categoryTotals[category] / totalExpense) * 100).toFixed(1), // ✅ Calculate percentage
   }));
 
-  // ✅ Define Pie Chart Colors
-  const COLORS = [
-    "#ff7675", "#fab1a0", "#fd79a8", "#636e72", "#0984e3",
-    "#6c5ce7", "#00cec9", "#fdcb6e", "#e17055", "#b2bec3"
+  // ✅ Define vibrant colors
+  const colors = [
+    "#ff6384", // Red
+    "#36a2eb", // Blue
+    "#ffce56", // Yellow
+    "#4bc0c0", // Teal
+    "#9966ff", // Purple
+    "#ff9f40", // Orange
+    "#e7e9ed", // Grey
+    "#ffcd56", // Light Yellow
+    "#c9cbcf", // Soft Grey
+    "#29b6f6", // Sky Blue
+    "#ab47bc", // Deep Purple
+    "#ef5350", // Light Red
   ];
 
   return (
     <div className="mt-8 bg-gray-900 p-4 rounded-lg shadow-lg">
       <h2 className="text-white text-lg font-semibold mb-4">📊 Expense Breakdown</h2>
       {data.length === 0 ? (
-        <p className="text-gray-400 text-center">No expenses recorded for this month.</p>
+        <p className="text-gray-400 text-center">No expenses for this month.</p>
       ) : (
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
               data={data}
+              dataKey="value"
+              nameKey="category"
               cx="50%"
               cy="50%"
               outerRadius={100}
-              fill="#8884d8"
-              dataKey="value"
-              label
+              label={({ name, percent }) => `${(percent * 100).toFixed(1)}%`}
             >
               {data.map((_, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip formatter={(value, name) => [`₹${value}`, name]} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>

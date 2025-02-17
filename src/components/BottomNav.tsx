@@ -9,7 +9,6 @@ const navItems = [
   { name: "Add", href: "/add-transaction", icon: PlusSquare },
   { name: "Analytics", href: "/analytics", icon: BarChart },
   { name: "Budget", href: "/budget", icon: Banknote },
-  { name: "Accounts", href: "/accounts", icon: Wallet },
 ];
 
 export default function BottomNav() {

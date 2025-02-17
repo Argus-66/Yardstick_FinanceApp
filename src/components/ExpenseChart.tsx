@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useMediaQuery } from "react-responsive"; 
 
 interface Transaction {
-  date: string;
+  category: string;
   amount: number;
-  type: "income" | "expense";
+  type: "expense";
 }
 
 interface ExpenseChartProps {
@@ -14,35 +15,39 @@ interface ExpenseChartProps {
 }
 
 export default function ExpenseChart({ transactions }: ExpenseChartProps) {
-  // ✅ Group transactions by day
-  const daysInMonth = new Date().getDate();
-  const dailyData = Array.from({ length: daysInMonth }, (_, i) => ({
-    day: i + 1,
-    income: 0,
-    expense: 0,
-  }));
+  // ✅ Detect screen size
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
+  // ✅ Group transactions by category (Only Expenses)
+  const categoryTotals: { [key: string]: number } = {};
   transactions.forEach((t) => {
-    const day = new Date(t.date).getDate() - 1;
-    if (t.type === "income") {
-      dailyData[day].income += Math.abs(t.amount);
-    } else {
-      dailyData[day].expense += Math.abs(t.amount);
+    if (t.type === "expense") {
+      categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Math.abs(t.amount);
     }
   });
 
+  // ✅ Format data for the Bar Chart
+  const data = Object.keys(categoryTotals).map((category) => ({
+    category,
+    expense: categoryTotals[category],
+  }));
+
   return (
     <div className="mt-8 bg-gray-900 p-4 rounded-lg shadow-lg">
-      <h2 className="text-white text-lg font-semibold mb-4">📊 Monthly Expenses & Income</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={dailyData}>
-          <XAxis dataKey="day" tick={{ fill: "white" }} />
-          <YAxis tick={{ fill: "white" }} />
-          <Tooltip />
-          <Bar dataKey="income" fill="green" name="Income" />
-          <Bar dataKey="expense" fill="red" name="Expense" />
-        </BarChart>
-      </ResponsiveContainer>
+      <h2 className="text-white text-lg font-semibold mb-4">📊 Monthly Expenses</h2>
+      {data.length === 0 ? (
+        <p className="text-gray-400 text-center">No expenses for this month.</p>
+      ) : (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data} layout={isMobile ? "vertical" : "horizontal"}>
+            <XAxis type={isMobile ? "number" : "category"} dataKey={isMobile ? undefined : "category"} tick={{ fill: "white" }} />
+            <YAxis type={isMobile ? "category" : "number"} dataKey={isMobile ? "category" : undefined} tick={{ fill: "white" }} width={120} />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="expense" fill="red" name="Expense" />
+          </BarChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 }

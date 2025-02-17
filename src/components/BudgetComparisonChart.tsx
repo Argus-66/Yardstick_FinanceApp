@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useMediaQuery } from "react-responsive"; // ✅ Detect screen size
 
 interface Transaction {
   category: string;
@@ -20,6 +21,9 @@ interface BudgetComparisonChartProps {
 }
 
 export default function BudgetComparisonChart({ transactions, budgets }: BudgetComparisonChartProps) {
+  // ✅ Detect screen size
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
   // ✅ Group transactions by category (Expenses Only)
   const expenseTotals: { [key: string]: number } = {};
   transactions.filter((t) => t.type === "expense").forEach((t) => {
@@ -40,9 +44,9 @@ export default function BudgetComparisonChart({ transactions, budgets }: BudgetC
         <p className="text-gray-400 text-center">No budget set for this month.</p>
       ) : (
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data}>
-            <XAxis dataKey="category" tick={{ fill: "white" }} />
-            <YAxis tick={{ fill: "white" }} />
+          <BarChart data={data} layout={isMobile ? "vertical" : "horizontal"}>
+            <XAxis type={isMobile ? "number" : "category"} dataKey={isMobile ? undefined : "category"} tick={{ fill: "white" }} />
+            <YAxis type={isMobile ? "category" : "number"} dataKey={isMobile ? "category" : undefined} tick={{ fill: "white" }} width={120} />
             <Tooltip />
             <Legend />
             <Bar dataKey="budget" fill="blue" name="Planned Budget" />
