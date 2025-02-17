@@ -3,9 +3,25 @@
 import React, { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
+// ✅ Define Transaction & Budget Interfaces
+interface Transaction {
+  _id: string;
+  date: string;
+  category: string;
+  amount: number;
+  type: "income" | "expense";
+}
+
+interface Budget {
+  _id: string;
+  month: string;
+  category: string;
+  amount: number;
+}
+
 export default function InsightsPage() {
-  const [transactions, setTransactions] = useState([]);
-  const [budgets, setBudgets] = useState([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]); // ✅ Set Proper Type
+  const [budgets, setBudgets] = useState<Budget[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().toISOString().slice(0, 7)); // Format YYYY-MM
 
   useEffect(() => {
@@ -14,8 +30,8 @@ export default function InsightsPage() {
         const transactionsRes = await fetch(`/api/transactions?month=${currentMonth}`);
         const budgetsRes = await fetch(`/api/budgets?month=${currentMonth}`);
         
-        const transactionsData = await transactionsRes.json();
-        const budgetsData = await budgetsRes.json();
+        const transactionsData: Transaction[] = await transactionsRes.json();
+        const budgetsData: Budget[] = await budgetsRes.json();
         
         setTransactions(transactionsData);
         setBudgets(budgetsData);
@@ -26,18 +42,32 @@ export default function InsightsPage() {
     fetchData();
   }, [currentMonth]);
 
-  // Find the biggest expense category
-  const expenseTotals = transactions.filter(t => t.type === "expense")
-    .reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Math.abs(t.amount);
+  // ✅ Group Transactions by Date for Spending Trends
+  const spendingData = transactions
+    .filter(t => t.type === "expense") // Exclude income
+    .reduce((acc: { date: string; total: number }[], t) => {
+      const existing = acc.find(entry => entry.date === t.date);
+      if (existing) {
+        existing.total += Math.abs(t.amount);
+      } else {
+        acc.push({ date: t.date, total: Math.abs(t.amount) });
+      }
       return acc;
-    }, {});
+    }, []);
 
-  const biggestExpenseCategory = Object.keys(expenseTotals).reduce((a, b) => expenseTotals[a] > expenseTotals[b] ? a : b, "");
+  // ✅ Find the Biggest Expense Category
+  const expenseTotals: { [key: string]: number } = {};
+  transactions.forEach((t) => {
+    if (t.type === "expense") {
+      expenseTotals[t.category] = (expenseTotals[t.category] || 0) + Math.abs(t.amount);
+    }
+  });
+
+  const biggestExpenseCategory = Object.keys(expenseTotals).reduce((a, b) => (expenseTotals[a] > expenseTotals[b] ? a : b), "");
   const biggestExpenseAmount = expenseTotals[biggestExpenseCategory] || 0;
 
-  // Smart Money Tips based on spending habits
-  const tips = [];
+  // ✅ Smart Money Tips based on spending habits
+  const tips: string[] = [];
   if (biggestExpenseCategory) {
     tips.push(`Try cutting back on ${biggestExpenseCategory} expenses to save more.`);
   }
@@ -47,7 +77,7 @@ export default function InsightsPage() {
   if (budgets.length > 0 && biggestExpenseAmount > 5000) {
     tips.push("Consider setting a stricter budget to control spending.");
   }
-  
+
   return (
     <div className="p-6">
       {/* Page Header */}
@@ -57,11 +87,11 @@ export default function InsightsPage() {
       <div className="bg-gray-900 p-4 rounded-lg shadow-lg">
         <h2 className="text-white text-lg font-semibold mb-4">📈 Spending Trends</h2>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={transactions}>
+          <LineChart data={spendingData}>
             <XAxis dataKey="date" tick={{ fill: "white" }} />
             <YAxis tick={{ fill: "white" }} />
             <Tooltip />
-            <Line type="monotone" dataKey="amount" stroke="#8884d8" />
+            <Line type="monotone" dataKey="total" stroke="#ff6384" name="Spending" />
           </LineChart>
         </ResponsiveContainer>
       </div>

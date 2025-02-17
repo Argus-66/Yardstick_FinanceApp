@@ -4,10 +4,12 @@ import React from "react";
 import { Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { useMediaQuery } from "react-responsive"; 
 
+// ✅ Explicitly Define `Transaction` Type
 interface Transaction {
+  _id: string;  // Ensure every transaction has an ID
   category: string;
   amount: number;
-  type: "expense";
+  type: "income" | "expense"; // ✅ Allow both income and expense types
 }
 
 interface ExpenseChartProps {
@@ -19,7 +21,7 @@ export default function ExpenseChart({ transactions }: ExpenseChartProps) {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   // ✅ Group transactions by category (Only Expenses)
-  const categoryTotals: { [key: string]: number } = {};
+  const categoryTotals: Record<string, number> = {}; // ✅ Ensures type safety
   transactions.forEach((t) => {
     if (t.type === "expense") {
       categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Math.abs(t.amount);
@@ -40,8 +42,17 @@ export default function ExpenseChart({ transactions }: ExpenseChartProps) {
       ) : (
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data} layout={isMobile ? "vertical" : "horizontal"}>
-            <XAxis type={isMobile ? "number" : "category"} dataKey={isMobile ? undefined : "category"} tick={{ fill: "white" }} />
-            <YAxis type={isMobile ? "category" : "number"} dataKey={isMobile ? "category" : undefined} tick={{ fill: "white" }} width={120} />
+            <XAxis 
+              type={isMobile ? "number" : "category"} 
+              dataKey={isMobile ? undefined : "category"} 
+              tick={{ fill: "white" }} 
+            />
+            <YAxis 
+              type={isMobile ? "category" : "number"} 
+              dataKey={isMobile ? "category" : undefined} 
+              tick={{ fill: "white" }} 
+              width={120} 
+            />
             <Tooltip />
             <Legend />
             <Bar dataKey="expense" fill="red" name="Expense" />
