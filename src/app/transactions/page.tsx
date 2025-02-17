@@ -33,13 +33,15 @@ export default function TransactionsPage() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-black min-h-screen text-white">
-      <h1 className="text-3xl font-bold mb-6 flex items-center">
+    <div className="max-w-5xl mx-auto p-6 bg-black min-h-screen text-white">
+      <h1 className="text-3xl font-bold mb-8 flex items-center justify-center">
         💰 <span className="ml-2">Transaction History</span>
       </h1>
 
       {/* Add Transaction Form */}
-      <TransactionForm onTransactionAdded={fetchTransactions} />
+      <div className="mb-10">
+        <TransactionForm onTransactionAdded={fetchTransactions} />
+      </div>
 
       {loading ? (
         <p className="text-center text-gray-400">Loading transactions...</p>
@@ -49,22 +51,22 @@ export default function TransactionsPage() {
         <>
           {/* Transaction Table */}
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-700 mt-4 text-white">
+            <table className="w-full border-collapse border border-gray-700 mt-6 text-white text-center">
               <thead>
-                <tr className="bg-gray-800 text-left">
-                  <th className="border border-gray-700 p-3">Date</th>
-                  <th className="border border-gray-700 p-3">Description</th>
-                  <th className="border border-gray-700 p-3">Category</th>
-                  <th className="border border-gray-700 p-3">Amount</th>
+                <tr className="bg-gray-800">
+                  <th className="border border-gray-700 p-4">Date</th>
+                  <th className="border border-gray-700 p-4">Description</th>
+                  <th className="border border-gray-700 p-4">Category</th>
+                  <th className="border border-gray-700 p-4">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {transactions.map((tx) => (
                   <tr key={tx._id} className="border border-gray-700 bg-gray-900 hover:bg-gray-800 transition">
-                    <td className="border border-gray-700 p-3">{new Date(tx.date).toLocaleDateString()}</td>
-                    <td className="border border-gray-700 p-3">{tx.description}</td>
-                    <td className="border border-gray-700 p-3">{tx.category}</td>
-                    <td className="border border-gray-700 p-3 font-bold">₹{tx.amount}</td>
+                    <td className="border border-gray-700 p-4">{new Date(tx.date).toLocaleDateString()}</td>
+                    <td className="border border-gray-700 p-4">{tx.description}</td>
+                    <td className="border border-gray-700 p-4">{tx.category}</td>
+                    <td className="border border-gray-700 p-4 font-bold">₹{tx.amount}</td>
                   </tr>
                 ))}
               </tbody>

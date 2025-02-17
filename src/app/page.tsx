@@ -1,14 +1,40 @@
-import Link from "next/link";
+"use client";
+
+import React, { useState } from "react";
+import { format, subMonths, addMonths } from "date-fns";
+import { MonthSelector } from "@/components/MonthSelector";
+import { ExpenseSummary } from "@/components/ExpenseSummary";
+import { TransactionsList } from "@/components/TransactionsList";
+import { FloatingAddButton } from "@/components/FloatingAddButton";
 
 export default function Home() {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // Format month for display
+  const formattedMonth = format(currentMonth, "MMMM, yyyy");
+
+  const handleMonthChange = (direction: "prev" | "next") => {
+    setCurrentMonth((prevMonth) =>
+      direction === "prev" ? subMonths(prevMonth, 1) : addMonths(prevMonth, 1)
+    );
+  };
+
   return (
-    <div className="max-w-3xl mx-auto p-6 text-center">
-      <h1 className="text-3xl font-bold mb-6">💰 Personal Finance Tracker</h1>
-      <Link href="/transactions">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded">
-          View Transactions
-        </button>
-      </Link>
+    <div className="p-6 space-y-4">
+      {/* Month Selector */}
+      <MonthSelector 
+        formattedMonth={formattedMonth} 
+        onMonthChange={handleMonthChange} 
+      />
+
+      {/* Expense Summary */}
+      <ExpenseSummary currentMonth={formattedMonth} />
+
+      {/* Transactions List */}
+      <TransactionsList currentMonth={formattedMonth} />
+
+      {/* Floating Add Button */}
+      <FloatingAddButton />
     </div>
   );
 }

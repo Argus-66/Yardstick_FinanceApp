@@ -35,16 +35,16 @@ export default function ExpenseCharts({ transactions }: { transactions: Transact
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#D988B9"];
 
   return (
-    <div className="mt-6">
-      <h2 className="text-xl font-bold text-center mb-4">📊 Expense Overview</h2>
+    <div className="mt-10">
+      <h2 className="text-2xl font-bold text-center mb-6">📊 Expense Overview</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Pie Chart */}
-        <div className="bg-gray-900 p-6 rounded-lg shadow-md">
+        <div className="bg-gray-900 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-lg font-semibold mb-4">Expense Breakdown</h3>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={300}>
             <PieChart>
-              <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" label>
+              <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} fill="#8884d8" label>
                 {pieData.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -55,9 +55,9 @@ export default function ExpenseCharts({ transactions }: { transactions: Transact
         </div>
 
         {/* Bar Chart */}
-        <div className="bg-gray-900 p-6 rounded-lg shadow-md">
+        <div className="bg-gray-900 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-lg font-semibold mb-4">Monthly Spending</h3>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart data={barData}>
               <XAxis dataKey="name" />
               <YAxis />

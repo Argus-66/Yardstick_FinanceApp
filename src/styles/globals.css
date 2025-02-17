@@ -2,20 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Debugging: Force Background Color */
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #0a0a0a !important; /* ✅ Force dark background */
+  color: #ededed !important; /* ✅ Force white text */
+}
+
+/* Debugging: Add a Test Class */
+.test-tailwind {
+  background: red;
+  color: white;
+  font-size: 24px;
+  padding: 10px;
 }
