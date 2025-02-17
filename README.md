@@ -1,4 +1,4 @@
-# 📊 Finance Tracker
+# 📊 Yardstick Assignment - Finance Tracker
 
 Finance Tracker is a **full-stack personal finance manager** that allows users to **track transactions, set budgets, analyze expenses, and gain financial insights** through **interactive charts and graphs**.
 
@@ -21,37 +21,13 @@ Finance Tracker is a **full-stack personal finance manager** that allows users t
 
 ---
 
-## 📂 Project Structure
-
-```bash
-📂 finance-tracker
-├── 📂 src
-│   ├── 📂 app
-│   │   ├── 📂 analytics         # Analytics Page (Expense Trends, Charts)
-│   │   ├── 📂 budget           # Budget Page (Set, Edit, Track Budgets)
-│   │   ├── 📂 insights         # Insights Page (Spending Trends, Money Tips)
-│   │   ├── 📂 add-transaction  # Add Transaction Page
-│   │   ├── 📂 api              # API Endpoints (Transactions, Budgets)
-│   │   ├── 📂 components       # Reusable Components
-│   │   │   ├── 📜 ExpenseChart.tsx            # Monthly Bar Chart (Expenses)
-│   │   │   ├── 📜 ExpensePieChart.tsx         # Category-wise Expense Breakdown
-│   │   │   ├── 📜 BudgetComparisonChart.tsx   # Budget vs Actual Graph
-│   │   │   ├── 📜 AnalyticsMonthSelector.tsx  # Month Selector for Analytics
-│   │   │   ├── 📜 Sidebar.tsx                 # Sidebar Navigation
-│   ├── 📂 models          # Database Models (Mongoose)
-│   ├── 📂 styles          # Global Styles
-│   ├── 📜 package.json    # Dependencies & Scripts
-│   ├── 📜 next.config.js  # Next.js Configuration
-```
-
----
 
 ## 🛠 Installation
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/Argus-66/finance-tracker.git
-cd finance-tracker
+git clone https://github.com/Argus-66/Yardstick_Assignment.git
+cd yardstick-assignment
 ```
 
 ### 2️⃣ Install dependencies
@@ -127,7 +103,6 @@ Follow the CLI steps to deploy.
 Pull requests are welcome! Please open an issue first to discuss any major changes.
 
 ---
-
 
 
 
