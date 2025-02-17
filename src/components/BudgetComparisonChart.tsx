@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 interface Transaction {
   category: string;
@@ -20,33 +20,36 @@ interface BudgetComparisonChartProps {
 }
 
 export default function BudgetComparisonChart({ transactions, budgets }: BudgetComparisonChartProps) {
-  // ✅ Summarize expenses by category
-  const actualExpenses = transactions
-    .filter((t) => t.type === "expense")
-    .reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Math.abs(t.amount);
-      return acc;
-    }, {} as Record<string, number>);
+  // ✅ Group transactions by category (Expenses Only)
+  const expenseTotals: { [key: string]: number } = {};
+  transactions.filter((t) => t.type === "expense").forEach((t) => {
+    expenseTotals[t.category] = (expenseTotals[t.category] || 0) + Math.abs(t.amount);
+  });
 
-  // ✅ Merge with budgets
-  const chartData = budgets.map((budget) => ({
+  // ✅ Format data for Chart
+  const data = budgets.map((budget) => ({
     category: budget.category,
     budget: budget.amount,
-    actual: actualExpenses[budget.category] || 0,
+    actual: expenseTotals[budget.category] || 0, // Show 0 if no expense for this category
   }));
 
   return (
-    <div className="mt-6 bg-gray-900 p-4 rounded-lg">
-      <h2 className="text-xl text-white font-bold mb-4">Budget vs. Actual</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData}>
-          <XAxis dataKey="category" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="budget" fill="#3b82f6" name="Budgeted" />
-          <Bar dataKey="actual" fill="#ef4444" name="Actual" />
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="mt-8 bg-gray-900 p-4 rounded-lg shadow-lg">
+      <h2 className="text-white text-lg font-semibold mb-4">📊 Budget vs Actual Spending</h2>
+      {data.length === 0 ? (
+        <p className="text-gray-400 text-center">No budget set for this month.</p>
+      ) : (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data}>
+            <XAxis dataKey="category" tick={{ fill: "white" }} />
+            <YAxis tick={{ fill: "white" }} />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="budget" fill="blue" name="Planned Budget" />
+            <Bar dataKey="actual" fill="red" name="Actual Expense" />
+          </BarChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 }

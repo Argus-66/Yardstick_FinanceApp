@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import MonthSelector from "@/components/MonthSelector";
+import AnalyticsMonthSelector from "@/components/AnalyticsMonthSelector";
 import ExpenseChart from "@/components/ExpenseChart";
+import ExpensePieChart from "@/components/ExpensePieChart";
 import BudgetComparisonChart from "@/components/BudgetComparisonChart";
-import { Select, SelectItem } from "@/components/ui/select"; // ✅ Using shadcn/ui
 
 export default function AnalyticsPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [transactions, setTransactions] = useState([]);
   const [budgets, setBudgets] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
 
   // ✅ Fetch transactions and budgets when month changes
   useEffect(() => {
@@ -33,29 +32,17 @@ export default function AnalyticsPage() {
     fetchData();
   }, [currentMonth]);
 
-  // ✅ Extract unique categories
-  const categories = [...new Set(transactions.map((t) => t.category))];
-
   return (
     <div className="p-6">
-      {/* Month Selector */}
-      <MonthSelector currentMonth={currentMonth} onMonthChange={setCurrentMonth} />
+      {/* ✅ Month Selector */}
+      <AnalyticsMonthSelector currentMonth={currentMonth} onMonthChange={setCurrentMonth} />
 
-      {/* Category Filter */}
-      <div className="mt-4 w-64">
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectItem value="">All Categories</SelectItem>
-          {categories.map((category) => (
-            <SelectItem key={category} value={category}>{category}</SelectItem>
-          ))}
-        </Select>
+      {/* ✅ Placeholder for Charts (Next Steps) */}
+      <div className="mt-6">
+        <ExpenseChart transactions={transactions} />
+        <ExpensePieChart transactions={transactions} />
+        <BudgetComparisonChart transactions={transactions} budgets={budgets} />
       </div>
-
-      {/* Monthly Expense Chart */}
-      <ExpenseChart transactions={transactions} selectedCategory={selectedCategory} />
-
-      {/* Budget vs. Actual Comparison */}
-      <BudgetComparisonChart transactions={transactions} budgets={budgets} />
     </div>
   );
 }

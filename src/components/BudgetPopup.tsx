@@ -82,12 +82,16 @@ export function BudgetPopup({ isOpen, onClose, onBudgetAdded, currentMonth }: Bu
             <option value="">Select Category</option>
             <option value="Food">Food</option>
             <option value="Groceries">Groceries</option>
+            <option value="Home">Home</option>
             <option value="Entertainment">Entertainment</option>
-            <option value="Transport">Transport</option>
-            <option value="Health">Health</option>
-            <option value="Clothing">Clothing</option>
             <option value="Bills">Bills</option>
+            <option value="Transport">Transport</option>
+            <option value="Beauty">Beauty</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Health">Health</option>
+            <option value="Sports">Sports</option>
             <option value="Shopping">Shopping</option>
+            <option value="Education">Education</option>
           </select>
 
           <button

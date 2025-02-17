@@ -1,31 +1,32 @@
 "use client";
 
 import React from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
-interface MonthSelectorProps {
+interface AnalyticsMonthSelectorProps {
   currentMonth: Date;
   onMonthChange: (date: Date) => void;
 }
 
-export default function MonthSelector({ currentMonth, onMonthChange }: MonthSelectorProps) {
-  const changeMonth = (offset: number) => {
-    const newMonth = new Date(currentMonth);
-    newMonth.setMonth(newMonth.getMonth() + offset);
-    onMonthChange(newMonth);
-  };
+export default function AnalyticsMonthSelector({ currentMonth, onMonthChange }: AnalyticsMonthSelectorProps) {
+  function handlePrevMonth() {
+    const prevMonth = new Date(currentMonth);
+    prevMonth.setMonth(prevMonth.getMonth() - 1);
+    onMonthChange(prevMonth);
+  }
+
+  function handleNextMonth() {
+    const nextMonth = new Date(currentMonth);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    onMonthChange(nextMonth);
+  }
 
   return (
-    <div className="flex justify-center items-center space-x-4 bg-gray-900 p-3 rounded-lg">
-      <button onClick={() => changeMonth(-1)} className="text-gray-300 hover:text-white">
-        <ChevronLeft />
-      </button>
-      <span className="text-white text-lg font-bold">
+    <div className="flex items-center justify-between bg-gray-800 text-white px-4 py-2 rounded-md shadow-md">
+      <button onClick={handlePrevMonth} className="text-gray-400 hover:text-white">&lt;</button>
+      <span className="text-lg font-semibold">
         {currentMonth.toLocaleString("default", { month: "long", year: "numeric" })}
       </span>
-      <button onClick={() => changeMonth(1)} className="text-gray-300 hover:text-white">
-        <ChevronRight />
-      </button>
+      <button onClick={handleNextMonth} className="text-gray-400 hover:text-white">&gt;</button>
     </div>
   );
 }
