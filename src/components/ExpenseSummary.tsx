@@ -1,51 +1,27 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 interface Transaction {
   amount: number;
-  date: string;
   type: "expense" | "income";
 }
 
 interface ExpenseSummaryProps {
-  currentMonth: string;
+  transactions: Transaction[]; // ✅ Now getting filtered transactions directly
 }
 
-export function ExpenseSummary({ currentMonth }: ExpenseSummaryProps) {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchTransactions() {
-      try {
-        const response = await fetch("/api/transactions");
-        const data: Transaction[] = await response.json();
-        setTransactions(data);
-      } catch (error) {
-        console.error("Error fetching transactions:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTransactions();
-  }, []);
-
-  // ✅ Filter transactions for the selected month
-  const filteredTransactions = transactions.filter((t) =>
-    t.date.startsWith(currentMonth.split(",")[1].trim())
-  );
-
+export function ExpenseSummary({ transactions }: ExpenseSummaryProps) {
   // ✅ Calculate total expense & total income separately
-  const totalExpense = filteredTransactions
+  const totalExpense = transactions
     .filter((t) => t.type === "expense")
     .reduce((acc, t) => acc + Math.abs(t.amount), 0);
 
-  const totalIncome = filteredTransactions
+  const totalIncome = transactions
     .filter((t) => t.type === "income")
     .reduce((acc, t) => acc + Math.abs(t.amount), 0);
 
-  const total = totalIncome - totalExpense; // ✅ Correct calculation
+  const total = totalIncome - totalExpense;
 
   return (
     <div className="grid grid-cols-3 text-center text-sm">

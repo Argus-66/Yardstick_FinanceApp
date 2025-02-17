@@ -5,34 +5,57 @@ import { Plus } from "lucide-react";
 
 export default function AddTransaction() {
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // ✅ Default to today
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [type, setType] = useState<"income" | "expense">("expense"); // ✅ Toggle between Income & Expense
+  const [type, setType] = useState<"income" | "expense">("expense");
 
   const incomeCategories = ["Salary", "Awards", "Coupons", "Grants", "Lottery", "Rent"];
-  const expenseCategories = ["Food", "Education", "Groceries", "Home", "Entertainment", "Bills", "Transport", "Beauty", "Clothing", "Health", "Sports", "Shopping"];
+  const expenseCategories = [
+    "Food", "Education", "Groceries", "Home", "Entertainment", "Bills",
+    "Transport", "Beauty", "Clothing", "Health", "Sports", "Shopping"
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // ✅ Set time to the current time while keeping the selected date
+    const selectedDate = new Date(date);
+    const now = new Date();
+    selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
     const transaction = {
-      amount: type === "expense" ? -Math.abs(parseFloat(amount)) : Math.abs(parseFloat(amount)), // ✅ Ensure correct sign
-      date,
+      amount: type === "expense" ? -Math.abs(parseFloat(amount)) : Math.abs(parseFloat(amount)),
+      date: selectedDate.toISOString(), // ✅ Correct date + current time
       description,
       category,
       type,
     };
 
     try {
-      await fetch("/api/transactions", {
+      const res = await fetch("/api/transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(transaction),
       });
-      alert("Transaction added!");
+
+      if (res.ok) {
+        alert("Transaction added!");
+        handleClearForm(); // ✅ Clear form after successful addition
+      } else {
+        alert("Failed to add transaction");
+      }
     } catch (error) {
       console.error("Error adding transaction:", error);
     }
+  };
+
+  const handleClearForm = () => {
+    setAmount("");
+    setDate(new Date().toISOString().split("T")[0]); // ✅ Reset to today
+    setDescription("");
+    setCategory("");
+    setType("expense");
   };
 
   return (
@@ -42,17 +65,13 @@ export default function AddTransaction() {
       {/* Income / Expense Toggle */}
       <div className="flex justify-center mb-4">
         <button
-          className={`px-4 py-2 rounded-l-lg ${
-            type === "expense" ? "bg-red-500 text-white" : "bg-gray-700 text-gray-300"
-          }`}
+          className={`px-4 py-2 rounded-l-lg ${type === "expense" ? "bg-red-500 text-white" : "bg-gray-700 text-gray-300"}`}
           onClick={() => setType("expense")}
         >
           Expense
         </button>
         <button
-          className={`px-4 py-2 rounded-r-lg ${
-            type === "income" ? "bg-green-500 text-white" : "bg-gray-700 text-gray-300"
-          }`}
+          className={`px-4 py-2 rounded-r-lg ${type === "income" ? "bg-green-500 text-white" : "bg-gray-700 text-gray-300"}`}
           onClick={() => setType("income")}
         >
           Income

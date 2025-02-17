@@ -1,55 +1,58 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { Trash } from "lucide-react";
 
 interface Budget {
-  date: string;
+  _id: string;
+  month: string;
   category: string;
   amount: number;
 }
 
-export function BudgetList() {
-  const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [loading, setLoading] = useState(true);
+interface BudgetListProps {
+  budgets: Budget[];
+  currentMonth: Date;
+  fetchBudgets: () => void;
+}
 
-  useEffect(() => {
-    async function fetchBudgets() {
-      try {
-        const response = await fetch("/api/budgets");
-        const data: Budget[] = await response.json();
-        setBudgets(data);
-      } catch (error) {
-        console.error("Error fetching budgets:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchBudgets();
-  }, []);
+
+export function BudgetList({ budgets, currentMonth, fetchBudgets }: BudgetListProps) {
+  console.log("📊 Rendering BudgetList with budgets:", budgets); // ✅ Debugging log
+
+  function handleDeleteBudget(id: string) {
+    fetch("/api/budgets", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    })
+      .then(() => fetchBudgets()) // ✅ Refresh budgets after delete
+      .catch((err) => console.error("Error deleting budget:", err));
+  }
 
   return (
-    <div className="space-y-4">
-      {loading ? (
-        <div className="text-center text-gray-400">Loading budgets...</div>
-      ) : budgets.length === 0 ? (
-        <div className="text-center text-gray-400">No budgets set.</div>
-      ) : (
-        budgets.map((b, index) => (
-          <div key={index} className="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
-                💰
-              </div>
-              <div>
-                <div className="text-white font-medium">{b.category}</div>
+    <div className="mt-6 w-full max-w-lg">
+      <h2 className="text-lg font-bold text-white mb-4 text-center">
+        Budgets for {currentMonth.toLocaleString("default", { month: "long", year: "numeric" })}
+      </h2>
+
+      <div className="space-y-4">
+        {budgets.length === 0 ? (
+          <div className="text-gray-400 text-center">No budgets set for this month.</div>
+        ) : (
+          budgets.map((budget) => (
+            <div key={budget._id} className="flex justify-between items-center bg-gray-800 p-3 rounded-md">
+              <div className="text-white">{budget.category}</div>
+              <div className="flex items-center space-x-4">
+                <div className="text-green-500 font-bold">₹{budget.amount.toFixed(2)}</div>
+                <button onClick={() => handleDeleteBudget(budget._id)} className="text-red-500 hover:text-white">
+                  🗑
+                </button>
               </div>
             </div>
-            <div className="text-lg text-green-500"> {/* ✅ Always Green */}
-              ₹{b.amount.toFixed(2)}
-            </div>
-          </div>
-        ))
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 }
