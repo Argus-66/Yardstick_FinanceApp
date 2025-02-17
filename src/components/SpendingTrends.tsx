@@ -1,55 +1,25 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
-import SpendingTrends from "@/components/SpendingTrends";
-import BiggestExpense from "@/components/BiggestExpense";
+import React from "react";
 import MoneyTips from "@/components/MoneyTips";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-export default function InsightsPage() {
-  const [transactions, setTransactions] = useState([]);
-  const [budgets, setBudgets] = useState([]);
-  const [currentMonth, setCurrentMonth] = useState(new Date().toISOString().slice(0, 7)); // Format YYYY-MM
+interface Transaction {
+  category: string;
+  amount: number;
+  type: "expense";
+}
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const transactionsRes = await fetch(`/api/transactions?month=${currentMonth}`);
-        const budgetsRes = await fetch(`/api/budgets?month=${currentMonth}`);
-        
-        const transactionsData = await transactionsRes.json();
-        const budgetsData = await budgetsRes.json();
-        
-        setTransactions(transactionsData);
-        setBudgets(budgetsData);
-      } catch (error) {
-        console.error("❌ Error fetching data:", error);
-      }
-    }
-    fetchData();
-  }, [currentMonth]);
+interface Budget {
+  category: string;
+  amount: number;
+}
 
+interface SpendingTrendsProps {
+  transactions: Transaction[];
+  budgets: Budget[];
+}
+
+export default function SpendingTrends({ transactions, budgets }: SpendingTrendsProps) {
   return (
-    <div className="p-6">
-      {/* Page Header */}
-      <h1 className="text-2xl font-bold text-white mb-4">📊 Spending Insights</h1>
-
-      {/* Spending Trends Over Time */}
-      <div className="bg-gray-900 p-4 rounded-lg shadow-lg">
-        <h2 className="text-white text-lg font-semibold mb-4">📈 Spending Trends</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={transactions}>
-            <XAxis dataKey="date" tick={{ fill: "white" }} />
-            <YAxis tick={{ fill: "white" }} />
-            <Tooltip />
-            <Line type="monotone" dataKey="amount" stroke="#8884d8" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Biggest Expense Category */}
-      <BiggestExpense transactions={transactions} />
-
+    <div>
       {/* Smart Money Tips */}
       <MoneyTips transactions={transactions} budgets={budgets} />
     </div>
