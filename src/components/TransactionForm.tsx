@@ -11,7 +11,7 @@ export default function TransactionForm({ onTransactionAdded }: { onTransactionA
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || !date || !description) return alert("All fields are required");
+    if (!amount || !date || !description) return alert("All fields are Required!");
 
     setLoading(true);
     const res = await fetch("/api/transactions", {
